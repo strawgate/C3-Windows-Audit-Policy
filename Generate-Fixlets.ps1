@@ -69,7 +69,7 @@ Function Generate-AuditPolRelevance {
     )
 
     # Handle whether we want this setting enabled or not
-    $Prefix = "not"
+    $Prefix = "not "
     if ($Enabled) { $prefix = ""}
 
     $Type = "Success"
