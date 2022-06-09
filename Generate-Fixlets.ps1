@@ -67,28 +67,21 @@ Function Generate-AuditPolRelevance {
         [switch] $Success,
         [switch] $Enabled
     )
-    $suffix = "system policy of subcategories whose (name of it = ""$Subcategory"") of $($Category.ToLowerInvariant()) category of audit policy"
-    $prefix = ""
 
     # Handle whether we want this setting enabled or not
-    if (-not $Enabled) {
-        $prefix = "not "
-    }
+    $Prefix = "not "
+    if ($Enabled) { $prefix = ""}
 
-    # Handle whether we are processing success or failure auditing
-    if ($Success) {
-        $prefix = $prefix + "audit success of "
-    }
-    elseif ($Failure) {
-        $prefix = $prefix + "audit failure of "
-    }
+    $Type = "Success"
+    if ($Failure) { $Type = "Failure" }
 
-    $Relevance = Generate-AuditPolCategoryRelevance -Category $Category
-    $Relevance += "exists subcategories whose (name of it = ""$Subcategory"") of $($Category.ToLowerInvariant()) category of audit policy"
-    $Relevance += $Prefix + $Suffix
-    # Assemble and return our relevance
+    $GeneratedRelevance = Get-AuditPolicySubCategoryCheckRelevance -Category $Category -Subcategory $Subcategory -Type $Type
+    
+    $Relevance = @()
+    $Relevance += Generate-AuditPolCategoryRelevance -Category $Category
+    $Relevance += $Prefix + $GeneratedRelevance 
+
     return $Relevance
-
 }
 
 Function Generate-AuditPolicyAnalyses {
