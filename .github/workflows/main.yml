@@ -37,5 +37,6 @@ jobs:
           # Artifact name
           name: Audit Fixlets
           # A file, directory or wildcard pattern that describes what to upload
-          path: 
+          path: |
             Output/*.bes
+            Other Fixlets/*.bes

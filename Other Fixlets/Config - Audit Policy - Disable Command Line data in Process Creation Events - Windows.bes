@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<BES xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="BES.xsd">
+	<Fixlet>
+		<Title>Config - Audit Policy - Disable Command Line data in Process Creation Events - Windows</Title>
+		<Description><![CDATA[<P>This disables the logging of command line invocation information in process creation events on supported operating systems.</P>
+<P>This Fixlet is only relevant on systems with process creation event logging enabled.</P>
+<H6>Limitations</H6>
+<P>Audit Policy settings applied via Group Policy will take precedence over settings applied via BigFix.</P>
+<H6>Copyright</H6>
+<P>This content is part of C3 Windows Audit Policy. C3 is a software package of BigFix content made available by Strawgate LLC. This content is licensed under a combination of Commons Clause 1.0 and Apache 2.0 licenses. Without limiting other conditions in the License this License does not grant to you the right to Sell the Software. For more information see the <A href="https://github.com/strawgate/C3-Windows-Audit-Policy/blob/main/license.md"><FONT color=#0066cc>full license</FONT></A>.</P>]]></Description>
+		<Relevance>Windows of Operating System</Relevance>
+		<Relevance><![CDATA[Version of Operating System >= "6.2"]]></Relevance>
+		<Relevance>exists (it = true) of (audit success of it; audit failure of it) of system policy of subcategories whose (name of it = "Process Creation") of categories whose (name of it = "Detailed Tracking") of audit policy</Relevance>
+		<Relevance>exists it whose (it = 1) of values "ProcessCreationIncludeCmdLine_Enabled" of keys "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\Audit" of (native registries)</Relevance>
+		<Category></Category>
+		<Source>Internal</Source>
+		<SourceID></SourceID>
+		<SourceReleaseDate>2022-06-10</SourceReleaseDate>
+		<SourceSeverity></SourceSeverity>
+		<CVENames></CVENames>
+		<SANSID></SANSID>
+		<MIMEField>
+			<Name>x-fixlet-modification-time</Name>
+			<Value>Sat, 11 Jun 2022 02:19:55 +0000</Value>
+		</MIMEField>
+		<Domain>BESC</Domain>
+		<DefaultAction ID="Action1">
+			<Description>
+				<PreLink>Click </PreLink>
+				<Link>here</Link>
+				<PostLink> to deploy this action.</PostLink>
+			</Description>
+			<ActionScript MIMEType="application/x-Fixlet-Windows-Shell">// Enter your action script here
+
+regdelete64 "[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\Audit]" "ProcessCreationIncludeCmdLine_Enabled"</ActionScript>
+		</DefaultAction>
+	</Fixlet>
+</BES>
