@@ -286,87 +286,10 @@ Foreach ($OtherFixlet in $OtherFixlets) {
 
     $DestinationFileName = $SourceFileName
     $DestinationFilePath = (Join-Path $OutputDir $DestinationFileName) 
-    
+
     Copy-Item $SourceFilePath $DestinationFilePath
 }
 
 write-host "Zipping the generated files"
 
 Compress-Archive -Path Output -DestinationPath Output.zip -Force
-
-<#
-# Generate Fixlets
-foreach ($CategoryKV in $AuditCategoriesToSubcategoriesToGuids.GetEnumerator()) {
-    $CategoryName = $CategoryKV.Name
-    $Subcategories = $CategoryKV.Value
-
-    $AnalysisName = "Audit Policy - $CategoryName - Windows"
-    $AnalysisDescription = "Audit Policy - $CategoryName - Windows"
-    $AnalysisRelevance = Generate-AuditPolCategoryRelevance -Category $CategoryName
-    $AnalysisProperties = [ordered] @{}
-
-    foreach ($SubcategoryKV in $Subcategories.GetEnumerator()) {
-        $SubcategoryName = $SubcategoryKV.Name
-        $SubcategoryGuid = $SubcategoryKV.Value
-
-        write-host ""
-        write-host "Processing $CategoryName -> $SubcategoryName = $SubcategoryGuid"
-
-        $Types = @("Success", "Failure")
-        $Modes = @("Enable", "Disable")
-
-        foreach ($Type in $Types) {
-
-            # Generate an Analysis property while we're here
-            $PropertyName = "Audit Policy - $CategoryName - $Type auditing for $SubCategoryName - Windows"
-
-            $PropertyRelevance = "audit $Type of system policy of subcategories whose (name of it = ""$SubcategoryName"") of $($CategoryName.ToLowerInvariant()) category of audit policy"
-
-            $AnalysisProperties.Add($PropertyName,$PropertyRelevance)
-
-            # Generate Fixlets now
-
-            foreach ($Mode in $Modes) {
-                
-                write-host " Creating $Type / $Mode"
-
-                $Title = "$Mode $($type.ToLowerInvariant()) auditing for the $CategoryName / $SubcategoryName audit policy"
-                $Description = "This Fixlet $($mode.ToLowerInvariant())s the auditing of $SubcategoryName events that end in $($type.ToLowerInvariant()). This policy is defined under ""$CategoryName"" in the Windows audit policy."
-                
-                # If we want to enable a setting, we need our relevance to check if it's disabled
-                # If we want to disable a setting, we need our relevance to check if it's enabled
-                $Relevance = @(Generate-AuditPolRelevance -Category $CategoryName -SubCategory $SubcategoryName -Success:$($Type -eq "Success") -Failure:$($Type -eq "Failure") -Enabled:$($Mode -ne "Enable"))
-                $ActionScript = Generate-AuditPolActionScript -Category $CategoryName -SubCategory $SubcategoryName -Success:$($Type -eq "Success") -Failure:$($Type -eq "Failure") -Enable:$($Mode -eq "Enable")
-
-                $Fixlet = Generate-BigFixFixlet -Title $Title -Description $Description -Relevance $Relevance -ActionScript $ActionScript
-
-                $Fixlet.BES.Fixlet.DefaultAction.Description.PostLink = "to $title"
-
-                Save-BigFixFixlet -Directory (Join-Path $PSScriptRoot "Output") -Fixlet $Fixlet
-            }
-        }
-
-        $Analysis = Generate-BigFixAnalysis -Title $AnalysisName -Description $AnalysisDescription -Relevance $AnalysisRelevance -Properties $AnalysisProperties
-        Save-BigFixAnalysis -Directory (Join-Path $PSScriptRoot "Output") -Analysis $Analysis
-    }
-}
-
-# Generate Analyses
-
-<#
-foreach ($CategoryKV in $AuditCategoriesToSubcategoriesToGuids.GetEnumerator()) {
-    $CategoryName = $CategoryKV.Name
-    $Subcategories = $CategoryKV.Value
-
-    foreach ($SubcategoryKV in $Subcategories.GetEnumerator()) {
-        $SubcategoryName = $SubcategoryKV.Name
-        $SubcategoryGuid = $SubcategoryKV.Value
-
-        $Types = @("Success", "Failure")
-
-        foreach ($Type in $Types)
-        $Relevance = "audit success of system policy of subcategories whose (name of it = ""$SubcategoryName"") of $($CategoryName.ToLowerInvariant()) category of audit policy"
-    }
-}#>
-
-#>

@@ -42,6 +42,10 @@ Function Save-BigFixAnalysis {
     )
 
     $FileName = (Sanitize-Filename -Name $Analysis.BES.Analysis.Title) + ".bes"
+    
+    # Remove any double spaces
+    $FileName = $FileName.Replace("  "," ")
+    
     $FilePath = (Join-Path $Directory $FileName)
 
     Set-Content -Path $FilePath -Value (Format-XML $Analysis) -Force
@@ -53,6 +57,10 @@ Function Save-BigFixFixlet {
     )
 
     $FileName = (Sanitize-Filename -Name $Fixlet.BES.Fixlet.Title) + ".bes"
+
+    # Remove any double spaces
+    $FileName = $FileName.Replace("  "," ")
+
     $FilePath = (Join-Path $Directory $FileName)
 
     Set-Content -Path $FilePath -Value (Format-XML $Fixlet) -Force
