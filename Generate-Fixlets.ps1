@@ -276,6 +276,20 @@ foreach ($AuditPolicyAnalysis in $AuditPolicyAnalyses) {
 
 write-host "Generated $($AuditPolicyAnalyses.Count) Analyses"
 
+write-host "Copying other fixlets to output directory"
+
+$OtherFixlets = Get-ChildItem (Join-Path $PSScriptRoot "Other Fixlets") -file
+
+Foreach ($OtherFixlet in $OtherFixlets) {
+    $SourceFileName = $OtherFixlet.Name
+    $SourceFilePath = $OtherFixlet.FullName
+
+    $DestinationFileName = $SourceFileName
+    $DestinationFilePath = (Join-Path $OutputDir $DestinationFileName) 
+    
+    Copy-Item $SourceFilePath $DestinationFilePath
+}
+
 write-host "Zipping the generated files"
 
 Compress-Archive -Path Output -DestinationPath Output.zip -Force
