@@ -1,6 +1,6 @@
 # C3-Windows-Audit-Policy
 
-This repository contains the tools used to generate Audit Policy fixlets and analyses for Windows BigFix clients.
+This repository contains the tools used to generate Audit Policy fixlets and analyses for Windows Vista+ BigFix clients.
 
 To download the generated Fixlets see the releases section here: https://github.com/strawgate/C3-Windows-Audit-Policy/releases
 

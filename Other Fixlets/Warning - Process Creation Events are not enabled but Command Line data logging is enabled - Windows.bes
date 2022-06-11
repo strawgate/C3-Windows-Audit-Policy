@@ -11,17 +11,13 @@
 		<Relevance><![CDATA[Version of Operating System >= "6.2"]]></Relevance>
 		<Relevance>not exists (it = true) of (audit success of it; audit failure of it) of system policy of subcategories whose (name of it = "Process Creation") of categories whose (name of it = "Detailed Tracking") of audit policy</Relevance>
 		<Relevance>exists it whose (it = 1) of values "ProcessCreationIncludeCmdLine_Enabled" of keys "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\Audit" of (native registries)</Relevance>
-		<Category></Category>
-		<Source>Internal</Source>
+		<Category>Audit Policy</Category>
+		<Source>C3 Audit Policy</Source>
 		<SourceID></SourceID>
 		<SourceReleaseDate>2022-06-10</SourceReleaseDate>
 		<SourceSeverity></SourceSeverity>
 		<CVENames></CVENames>
 		<SANSID></SANSID>
-		<MIMEField>
-			<Name>x-fixlet-modification-time</Name>
-			<Value>Sat, 11 Jun 2022 02:21:04 +0000</Value>
-		</MIMEField>
 		<Domain>BESC</Domain>
 		<DefaultAction ID="Action1">
 			<Description>

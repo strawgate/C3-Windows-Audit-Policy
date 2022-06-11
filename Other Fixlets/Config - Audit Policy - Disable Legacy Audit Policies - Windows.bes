@@ -12,17 +12,13 @@
 		<Relevance>exists audit policy</Relevance>
 		<Relevance>exists categories of audit policy</Relevance>
 		<Relevance>not exists it whose (it = 1) of values "SCENoApplyLegacyAuditPolicy" of keys "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa" of (native registries)</Relevance>
-		<Category></Category>
-		<Source>Internal</Source>
+		<Category>Audit Policy</Category>
+		<Source>C3 Audit Policy</Source>
 		<SourceID></SourceID>
 		<SourceReleaseDate>2022-06-10</SourceReleaseDate>
 		<SourceSeverity></SourceSeverity>
 		<CVENames></CVENames>
 		<SANSID></SANSID>
-		<MIMEField>
-			<Name>x-fixlet-modification-time</Name>
-			<Value>Sat, 11 Jun 2022 16:45:33 +0000</Value>
-		</MIMEField>
 		<Domain>BESC</Domain>
 		<DefaultAction ID="Action1">
 			<Description>

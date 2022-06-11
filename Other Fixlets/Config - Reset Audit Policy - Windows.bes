@@ -18,10 +18,6 @@
 		<SourceSeverity></SourceSeverity>
 		<CVENames></CVENames>
 		<SANSID></SANSID>
-		<MIMEField>
-			<Name>x-fixlet-modification-time</Name>
-			<Value>Sat, 11 Jun 2022 02:19:20 +0000</Value>
-		</MIMEField>
 		<Domain>BESC</Domain>
 		<DefaultAction ID="Action1">
 			<Description>
