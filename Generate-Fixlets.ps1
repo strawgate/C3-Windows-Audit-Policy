@@ -10,7 +10,22 @@ $HelperDir = (Join-Path $PSScriptRoot "Helpers")
 . (Join-Path $HelperDir "FilesystemHelpers.ps1")
 . (Join-Path $HelperDir "XMLHelpers.ps1")
 
-
+$HTMLCSS = @"
+<head>
+<style>
+    h6 {
+        margin-bottom: 2px
+    }
+    p {
+        margin-top: 0px;
+    }
+</style>
+</head>
+"@
+$Copyright = @"
+<h6>Copyright</h6>
+<p>This content is part of C3 Windows Audit Policy. C3 is a software package of BigFix content made available by Strawgate LLC. This content is licensed under a combination of Commons Clause 1.0 and Apache 2.0 licenses. Without limiting other conditions in the License this License does not grant to you the right to Sell the Software. For more information see the <a href="https://github.com/strawgate/C3-Windows-Audit-Policy/blob/main/license.md">full license</a>.</p>
+"@
 
 Function Generate-AuditPolCategoryRelevance {
     param (
@@ -105,8 +120,15 @@ Function Generate-AuditPolicyCategoryAnalysis {
 
     
     $Name = "Audit Policy - $Category - Windows"
-    $Description = "Audit Policy - $Category - Windows"
-
+    $Description = @"
+$HTMLCSS
+<body>
+Returns information related to the current state of audit policies under the $Category audit policy category."
+<h6>$Category Audit Information</h6>
+<p>$(Get-AuditPolicyCategoryDescription -Category $Category)</p>
+$Copyright
+</body>
+"@
     $Relevance = Generate-AuditPolCategoryRelevance -Category $Category
 
     $Properties = [ordered] @{}
@@ -199,15 +221,33 @@ Function Generate-AuditPolicySubcategoryFixlet {
     $Type = if ($Success) {"Success"} else {"Failure"}
     $Action = if ($Enable) {"Enable"}   else {"Disable"}
 
-    $Title = "$Action $($Type.ToLowerInvariant()) auditing for the $Category / $Subcategory audit policy"
-    $Description = "This Fixlet $($Action.ToLowerInvariant())s the auditing of $Subcategory events that end in $($Type.ToLowerInvariant()). This policy is defined under ""$Category"" in the Windows audit policy."
+    $Title = "Config - Audit Policy - $Action $($Type.ToLowerInvariant()) auditing for $Category / $Subcategory - Windows"
+    $ActionTitle = "$($Action.ToLowerInvariant()) $($Type.ToLowerInvariant()) auditing for $Category / $Subcategory"
+
+    $Description = @"
+$HTMLCSS
+<body>
+
+<p>This Fixlet $($Action.ToLowerInvariant())s the auditing of $Subcategory events that end in $($Type.ToLowerInvariant()).</p>
+<br>
+<h6>$Category Audit Information</h6>
+<p>$(Get-AuditPolicyCategoryDescription -Category $Category)</p>
+<h6>Configuring Audit Policies</h6>
+<p>Audit Policies are configured using secpol.msc under "Advanced Audit Policy Configuration" or via Group Policy by navigating to "Windows Settings" then "Security Settings" then "Advanced Audit Policy Configuration".</p> The setting this Fixlet changes is defined under the ""$Category"" section of the Advanced Audit Policy Configuration in a setting called, ""$Subcategory"".
+<h6>Limitations</h6>
+<p>Audit Policy settings applied via Group Policy will take precedence over settings applied via BigFix.</p>
+<h6>Event Volume</h6>
+<p>Finding the right balance between auditing enough network and computer activity and auditing too little network and computer activity can be challenging. You can achieve this balance by identifying the most important resources, critical activities, and users or groups of users. Then design a security audit policy that targets these resources, activities, and users.</p>
+$Copyright
+</body>
+"@
     
     $Relevance = @(Generate-AuditPolRelevance -Category $Category -SubCategory $Subcategory -Success:$($Type -eq "Success") -Failure:$($Type -eq "Failure") -Enabled:$($Action -ne "Enable"))
     $ActionScript = Generate-AuditPolActionScript -Category $Category -SubCategory $Subcategory -Success:$($Type -eq "Success") -Failure:$($Type -eq "Failure") -Enable:$($Action -eq "Enable")
 
     $Fixlet = Generate-BigFixFixlet -Title $Title -Description $Description -Relevance $Relevance -ActionScript $ActionScript
 
-    $Fixlet.BES.Fixlet.DefaultAction.Description.PostLink = "to $title"
+    $Fixlet.BES.Fixlet.DefaultAction.Description.PostLink = " to $ActionTitle"
 
     return $Fixlet
 }
