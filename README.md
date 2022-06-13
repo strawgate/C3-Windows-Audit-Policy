@@ -23,11 +23,11 @@ In addition, there are several other fixlets that manage things outside of the A
 
 The following audit policies should be enabled on member servers to meet STIG auditing requirements (Server 2019):
 
-## Server 2019 and Server 2016
+## Server 2022, 2019, and Server 2016
 
-The following audit policies should be enabled on Server 2019 systems for STIG compliance
+The following audit policies should be enabled on Server 2022, 2019, and Server 2016 systems for STIG compliance
 
-* Config - Audit Policy Enable failure auditing for Account Logon Credential Validation Windows
+* Config - Audit Policy Enable failure auditing for Account Logon Credential Validation - Windows
 * Config - Audit Policy Enable failure auditing for Account Management User Account Management - Windows
 * Config - Audit Policy Enable failure auditing for DS Access Directory Service Access - Windows
 * Config - Audit Policy Enable failure auditing for DS Access Directory Service Changes - Windows
@@ -70,7 +70,7 @@ The following audit policies should be enabled on Server 2019 systems for STIG c
 
 The following audit policies should be enabled on Server 2012r2 and 2012 systems for STIG compliance
 
-* Config - Audit Policy Enable failure auditing for Account Logon Credential Validation Windows
+* Config - Audit Policy Enable failure auditing for Account Logon Credential Validation - Windows
 * Config - Audit Policy Enable failure auditing for Account Management User Account Management - Windows
 * Config - Audit Policy Enable failure auditing for DS Access Directory Service Access - Windows
 * Config - Audit Policy Enable failure auditing for DS Access Directory Service Changes - Windows
@@ -108,7 +108,7 @@ The following audit policies should be enabled on Server 2012r2 and 2012 systems
 
 The following audit policies should be enabled on Windows 10 systems for STIG compliance
 
-* Config - Audit Policy Enable failure auditing for Account Logon Credential Validation Windows
+* Config - Audit Policy Enable failure auditing for Account Logon Credential Validation - Windows
 * Config - Audit Policy Enable failure auditing for Account Management User Account Management - Windows
 * Config - Audit Policy Enable failure auditing for Logon/Logoff Account Lockout - Windows
 * Config - Audit Policy Enable failure auditing for Logon/Logoff Logon - Windows
