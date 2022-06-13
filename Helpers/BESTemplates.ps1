@@ -1,3 +1,22 @@
+Function Join-BESContent {
+    param (
+        [string[]] $File,
+        [string] $OutFile
+    )
+
+    $FirstFile = $File[0]
+
+    $Collection = [xml] (Get-Content -raw $FirstFile)
+    
+    foreach ($thisFile in $File) {
+        $Object = [xml] (Get-Content -raw $thisFile)
+        $Node = $Object.SelectSingleNode("BES").FirstChild
+        $NewNode = $Collection.ImportNode($Node, $True)
+        [void] $Collection.BES.AppendChild($NewNode)
+    }
+
+    $Collection.Save($OutFile)
+} 
 
 $FixletTemplate = [xml]@"
 <?xml version="1.0" encoding="UTF-8"?>
@@ -48,7 +67,7 @@ Function Save-BigFixAnalysis {
     
     $FilePath = (Join-Path $Directory $FileName)
 
-    Set-Content -Path $FilePath -Value (Format-XML $Analysis) -Force
+    Set-Content -Path $FilePath -Value (Format-XML $Analysis)
 }
 Function Save-BigFixFixlet {
     param (
@@ -63,7 +82,7 @@ Function Save-BigFixFixlet {
 
     $FilePath = (Join-Path $Directory $FileName)
 
-    Set-Content -Path $FilePath -Value (Format-XML $Fixlet) -Force
+    Set-Content -Path $FilePath -Value (Format-XML $Fixlet)
 }
 
 Function Generate-BigFixAnalysis {

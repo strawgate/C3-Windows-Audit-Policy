@@ -1,3 +1,7 @@
+param (
+    $OutDir
+)
+
 Set-StrictMode -Version 3
 $ErrorActionPreference = "stop"
 
@@ -135,5 +139,6 @@ unique values of (
 
     $Analysis = Generate-BigFixAnalysis -Title $Name -Description $Description -Relevance $Relevance -Properties $Properties
 
-    $Analysis.Save((Join-Path $PSScriptRoot "..\Output\$Name.bes"))
+    $FileName = $Name
+    $Analysis.Save((Join-Path $OutDir "$FileName.bes"))
 }

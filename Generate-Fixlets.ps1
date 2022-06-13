@@ -239,15 +239,19 @@ $Copyright
 
 
 $OutputDir = (Join-Path $PSScriptRoot "Output")
+$FixletOutputDir = (Join-Path $PSScriptRoot "Output\Individual Fixlets")
+$AnalysisOutputDir = (Join-Path $PSScriptRoot "Output\Individual Analyses")
 
 Remove-Item $OutputDir -Recurse -ErrorAction SilentlyContinue | out-null
 New-Item $OutputDir -ItemType Directory -ErrorAction SilentlyContinue | out-null
+New-Item $FixletOutputDir -ItemType Directory -ErrorAction SilentlyContinue | out-null
+New-Item $AnalysisOutputDir -ItemType Directory -ErrorAction SilentlyContinue | out-null
 
 # Generate Fixlets
 $AuditPolicyFixlets = Generate-AuditPolicyFixlets
 
 foreach ($AuditPolicyFixlet in $AuditPolicyFixlets) {
-    Save-BigFixFixlet -Fixlet $AuditPolicyFixlet -Directory $OutputDir
+    Save-BigFixFixlet -Fixlet $AuditPolicyFixlet -Directory $FixletOutputDir
 }
 
 write-host "Generated $($AuditPolicyFixlets.Count) Fixlets"
@@ -257,12 +261,12 @@ write-host "Generating Audit Policy Category Analyses"
 $AuditPolicyAnalyses = Generate-AuditPolicyAnalyses
 
 foreach ($AuditPolicyAnalysis in $AuditPolicyAnalyses) {
-    Save-BigFixAnalysis -Analysis $AuditPolicyAnalysis -Directory $OutputDir
+    Save-BigFixAnalysis -Analysis $AuditPolicyAnalysis -Directory $AnalysisOutputDir
 }
 
 # Generate STIG Analyses
 write-host "Generating STIG Analyses"
-& (Join-Path $PSScriptRoot "STIG\Generate-STIGAnalyses.ps1")
+& (Join-Path $PSScriptRoot "STIG\Generate-STIGAnalyses.ps1") -OutDir $AnalysisOutputDir
 
 write-host "Generated $($AuditPolicyAnalyses.Count) Analyses"
 
@@ -274,12 +278,20 @@ Foreach ($OtherFixlet in $OtherFixlets) {
     $SourceFileName = $OtherFixlet.Name
     $SourceFilePath = $OtherFixlet.FullName
 
-    $DestinationFileName = $SourceFileName
-    $DestinationFilePath = (Join-Path $OutputDir $DestinationFileName) 
+    $DestinationFileName = Shorten-Filename -Name $SourceFileName
+    $DestinationFilePath = (Join-Path $FixletOutputDir $DestinationFileName) 
 
     Copy-Item $SourceFilePath $DestinationFilePath
 }
 
+Copy-Item (Join-Path $PSScriptRoot "Distributables\Readme.md") (Join-Path $OutputDir "Readme.md")
+
+# Shorten File Names
+
+$OutputFiles = Get-ChildItem $OutputDir -file -recurse -Filter "*.bes"
+
+Join-BESContent -File $OutputFiles -OutFile (Join-Path $OutputDir "C3 Windows Audit Policy - All Analyses and Fixlets.bes")
+
 write-host "Zipping the generated files"
 
-Compress-Archive -Path Output -DestinationPath Output.zip -Force
+Compress-Archive -Path Output\* -DestinationPath Output.zip -Force
