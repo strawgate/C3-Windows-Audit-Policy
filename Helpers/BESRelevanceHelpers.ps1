@@ -27,5 +27,5 @@ Function Get-AuditPolicySubCategoryCheckRelevance {
         [string] $Subcategory,
         [string] $Type
     )
-    return "audit $($Type.ToLowerInvariant()) of system policy of subcategories whose (name of it = ""$SubCategory"") of categories whose (name of it = ""$Category"") of audit policy"
+    return "audit $($Type.ToLowerInvariant()) of system policy of subcategories whose (name of it = ""$SubCategory"" /*WE*/) of categories whose (name of it = ""$Category"") of audit policy"
 }
