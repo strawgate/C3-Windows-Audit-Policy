@@ -2,11 +2,12 @@
 <BES xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="BES.xsd">
 	<Fixlet>
 		<Title>Config - Audit Policy - Disable Legacy Audit Policies - Windows</Title>
-		<Description><![CDATA[<P>This setting prevents Windows from using the legacy-style (Windows XP) audit policy configurations when deciding when to generate audit messages. This results in the Advanced Audit Policy Configuration being the primary source of Audit policy configuration.</P>
-<H6>Limitations</H6>
-<P>Audit Policy settings applied via Group Policy will take precedence over settings applied via BigFix.</P>
-<H6>Copyright</H6>
-<P>This content is part of C3 Windows Audit Policy. C3 is a software package of BigFix content made available by Strawgate LLC. This content is licensed under a combination of Commons Clause 1.0 and Apache 2.0 licenses. Without limiting other conditions in the License this License does not grant to you the right to Sell the Software. For more information see the <A href="https://github.com/strawgate/C3-Windows-Audit-Policy/blob/main/license.md"><FONT color=#0066cc>full license</FONT></A>.</P>]]></Description>
+		<Description><![CDATA[<P>This setting prevents Windows from using the legacy-style (Windows XP) audit policy configurations when deciding when to generate audit messages. This results in the Advanced Audit Policy Configuration being the primary source of Audit policy configuration.</p>
+<H6>Limitations</h6>
+<P>Audit Policy settings applied via Group Policy will take precedence over settings applied via BigFix.</p>
+<H6>Copyright</h6>
+<P>This content is part of C3 Windows Audit Policy. C3 is a software package of BigFix content made available by Strawgate LLC. This content is licensed under a combination of Commons Clause 1.0 and Apache 2.0 licenses. Without limiting other conditions in the License this License does not grant to you the right to Sell the Software. For more information see the <A href="https://github.com/strawgate/C3-Windows-Audit-Policy/blob/main/license.md"><FONT color=#0066cc>full license</FONT></A>.</p>
+]]></Description>
 		<Relevance>Windows of Operating System</Relevance>
 		<Relevance><![CDATA[Version of Operating System >= "6.0"]]></Relevance>
 		<Relevance>exists audit policy</Relevance>
@@ -14,11 +15,15 @@
 		<Relevance>not exists it whose (it = 1) of values "SCENoApplyLegacyAuditPolicy" of keys "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa" of (native registries)</Relevance>
 		<Category>Audit Policy</Category>
 		<Source>C3 Audit Policy</Source>
-		<SourceID></SourceID>
+		<SourceID>
+		</SourceID>
 		<SourceReleaseDate>2022-06-10</SourceReleaseDate>
-		<SourceSeverity></SourceSeverity>
-		<CVENames></CVENames>
-		<SANSID></SANSID>
+		<SourceSeverity>
+		</SourceSeverity>
+		<CVENames>
+		</CVENames>
+		<SANSID>
+		</SANSID>
 		<Domain>BESC</Domain>
 		<DefaultAction ID="Action1">
 			<Description>
