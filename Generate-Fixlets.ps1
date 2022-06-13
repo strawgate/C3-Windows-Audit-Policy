@@ -8,24 +8,9 @@ $HelperDir = (Join-Path $PSScriptRoot "Helpers")
 . (Join-Path $HelperDir "BESTemplates.ps1")
 . (Join-Path $HelperDir "BESRelevanceHelpers.ps1")
 . (Join-Path $HelperDir "FilesystemHelpers.ps1")
+. (Join-Path $HelperDir "HTMLHelpers.ps1")
 . (Join-Path $HelperDir "XMLHelpers.ps1")
 
-$HTMLCSS = @"
-<head>
-<style>
-    h6 {
-        margin-bottom: 2px
-    }
-    p {
-        margin-top: 0px;
-    }
-</style>
-</head>
-"@
-$Copyright = @"
-<h6>Copyright</h6>
-<p>This content is part of C3 Windows Audit Policy. C3 is a software package of BigFix content made available by Strawgate LLC. This content is licensed under a combination of Commons Clause 1.0 and Apache 2.0 licenses. Without limiting other conditions in the License this License does not grant to you the right to Sell the Software. For more information see the <a href="https://github.com/strawgate/C3-Windows-Audit-Policy/blob/main/license.md">full license</a>.</p>
-"@
 
 Function Generate-AuditPolCategoryRelevance {
     param (
@@ -123,7 +108,7 @@ Function Generate-AuditPolicyCategoryAnalysis {
     $Description = @"
 $HTMLCSS
 <body>
-Returns information related to the current state of audit policies under the $Category audit policy category."
+Returns information related to the current state of audit policies under the $Category audit policy category.
 <h6>$Category Audit Information</h6>
 <p>$(Get-AuditPolicyCategoryDescription -Category $Category)</p>
 $Copyright
@@ -268,11 +253,16 @@ foreach ($AuditPolicyFixlet in $AuditPolicyFixlets) {
 write-host "Generated $($AuditPolicyFixlets.Count) Fixlets"
 
 # Generate Analyses
+write-host "Generating Audit Policy Category Analyses"
 $AuditPolicyAnalyses = Generate-AuditPolicyAnalyses
 
 foreach ($AuditPolicyAnalysis in $AuditPolicyAnalyses) {
     Save-BigFixAnalysis -Analysis $AuditPolicyAnalysis -Directory $OutputDir
 }
+
+# Generate STIG Analyses
+write-host "Generating STIG Analyses"
+& (Join-Path $PSScriptRoot "STIG\Generate-STIGAnalyses.ps1")
 
 write-host "Generated $($AuditPolicyAnalyses.Count) Analyses"
 

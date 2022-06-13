@@ -111,6 +111,19 @@ Function Get-AuditPolicySubCategory {
     return $AuditCategoriesToSubcategoriesToGuids[$Category].Keys | % {$_.ToString()}
 }
 
+Function Get-AuditPolicyCategoryFromSubcategory {
+    param (
+        [string] $Subcategory
+    )
+
+    foreach ($AuditCategoriesToSubcategoriesToGuidsKV in $AuditCategoriesToSubcategoriesToGuids.GetEnumerator()) {
+        $Category = $AuditCategoriesToSubcategoriesToGuidsKV.Name
+        $Subcategories = $AuditCategoriesToSubcategoriesToGuidsKV.Value.Keys | %{$_.ToString()}
+
+        if ($Subcategory -in $Subcategories) { return $Category }
+    }
+}
+
 Function Get-AuditPolicySubCategoryGuid {
     param (
         [string] $Category,
