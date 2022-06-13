@@ -104,7 +104,7 @@ The following audit policies should be enabled on Server 2012r2 and 2012 systems
 * Config - Audit Policy Enable success auditing for System Security System Extension - Windows
 * Config - Audit Policy Enable success auditing for System System Integrity - Windows
 
-## Windows 10
+## Windows 10 and Windows 11
 
 The following audit policies should be enabled on Windows 10 systems for STIG compliance
 
