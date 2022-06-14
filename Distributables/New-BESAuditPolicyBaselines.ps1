@@ -1,5 +1,5 @@
 param (
-    $Uri = "https://prd-bfx-srv-01.ad.weaston.org:52311/api",
+    $Uri,
     $Credential = (Get-Credential),
     $SiteName = "C3-Windows-Audit-Policy"
 )
