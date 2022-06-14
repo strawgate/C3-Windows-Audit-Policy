@@ -196,7 +196,7 @@ if ($Credential -eq $null) {
     $Credential = Get-Credential
 }
 
-$BESConnection = New-BESServerConnection -Server "https://prd-bfx-srv-01.ad.weaston.org:52311/api" -Credential $Credential -TrustedConnection $False
+$BESConnection = New-BESServerConnection -Server $uri -Credential $Credential -TrustedConnection $False
 
 $SitePath = "site/$SiteType/$SiteName"
 
@@ -204,14 +204,6 @@ $Site = $BESConnection.GET($SitePath).BES.CustomSite
 
 $FixletsInSite = $BESConnection.GET("$SitePath\content").BESAPI.Fixlet
 
-<#
-
-<Fixlet Resource="https://prd-bfx-srv-01.ad.weaston.org:52311/api/fixlet/custom/C3-Windows-Audit-Policy/20458" LastModified="Sat, 11 Jun 2022 16:59:36 +0000">
-    <Name>Config - Audit Policy - Disable Command Line data in Process Creation Events - Windows</Name>
-    <ID>20458</ID>
-</Fixlet>
-
-#>
 
 $NewBaseline = $BaselineTemplate.Clone()
 
