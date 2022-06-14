@@ -19,11 +19,23 @@ In addition, there are several other fixlets that manage things outside of the A
 * Enabling Command Line Auditing for Process Creation Events
 * Disabling legacy Audit Policy settings
 
+# Event Volume
+
+See the Analysis "Event Log - Event Volume - Windows" for current eventing volume on reporting Windows systems. As audit policies can greatly increase event volume, you can use the properties in this analysis to track the current event creation rate on your systems.
+
 # STIG Compliance
+
+## Compliance Score
+
+See the "STIG - Windows * Audit Policy Compliance - Windows" Properties in the "STIG - Windows * Audit Policy - Windows" analyses. These properties include a percentage-based score of how closely your current audit policy is aligned with the STIG baseline for that platform.
+
+Once you have a score, you can see the property "STIG - Windows * Missing Audit Policies - Windows" for which audit policies that are currently missing from the system. Or you can see property "STIG - Windows * Extra Audit Policies - Windows" for a list of audit policies that are applied to the system but not required by the STIG baseline for this Operating System.
+
+## Audit Policies
 
 The following audit policies should be enabled on member servers to meet STIG auditing requirements (Server 2019):
 
-## Server 2022, 2019, and Server 2016
+### Server 2022, 2019, and Server 2016
 
 The following audit policies should be enabled on Server 2022, 2019, and Server 2016 systems for STIG compliance
 
@@ -66,7 +78,7 @@ The following audit policies should be enabled on Server 2022, 2019, and Server 
 * Config - Audit Policy Enable success auditing for System Security System Extension - Windows
 * Config - Audit Policy Enable success auditing for System System Integrity - Windows
 
-## Server 2012r2 and 2012
+### Server 2012r2 and 2012
 
 The following audit policies should be enabled on Server 2012r2 and 2012 systems for STIG compliance
 
@@ -104,7 +116,7 @@ The following audit policies should be enabled on Server 2012r2 and 2012 systems
 * Config - Audit Policy Enable success auditing for System Security System Extension - Windows
 * Config - Audit Policy Enable success auditing for System System Integrity - Windows
 
-## Windows 10 and Windows 11
+### Windows 10 and Windows 11
 
 The following audit policies should be enabled on Windows 10 systems for STIG compliance
 
