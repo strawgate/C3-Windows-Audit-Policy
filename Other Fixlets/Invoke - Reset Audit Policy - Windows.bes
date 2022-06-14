@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<BES xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="BES.xsd">
+	<Fixlet>
+		<Title>Config - Reset Audit Policy - Windows</Title>
+		<Description><![CDATA[<P>This Fixlet resets the Windows Audit Policy </p>
+<H6>Limitations</h6>
+<P>Audit Policy settings applied via Group Policy will take precedence over settings applied via BigFix.</p>
+<H6>Copyright</h6>
+<P>This content is part of C3 Windows Audit Policy. C3 is a software package of BigFix content made available by Strawgate LLC. This content is licensed under a combination of Commons Clause 1.0 and Apache 2.0 licenses. Without limiting other conditions in the License this License does not grant to you the right to Sell the Software. For more information see the <A href="https://github.com/strawgate/C3-Windows-Audit-Policy/blob/main/license.md"><FONT color=#0066cc>full license</FONT></A>.</p>
+]]></Description>
+		<Relevance>Windows of Operating System</Relevance>
+		<Relevance>exists Audit Policy</Relevance>
+		<Relevance>exists it whose (it = true) of (audit success of it; audit failure of it) of system policies of subcategories of categories of audit policy</Relevance>
+		<Category>Audit Policy</Category>
+		<DownloadSize>0</DownloadSize>
+		<Source>C3 Audit Policy</Source>
+		<SourceID>
+		</SourceID>
+		<SourceReleaseDate>2022-06-09</SourceReleaseDate>
+		<SourceSeverity>
+		</SourceSeverity>
+		<CVENames>
+		</CVENames>
+		<SANSID>
+		</SANSID>
+		<Domain>BESC</Domain>
+		<DefaultAction ID="Action1">
+			<Description>
+				<PreLink>Click </PreLink>
+				<Link>here</Link>
+				<PostLink>to reset the Windows Audit Policy</PostLink>
+			</Description>
+			<ActionScript MIMEType="application/x-Fixlet-Windows-Shell">action uses wow64 redirection {not x64 of operating system}waithidden auditpol.exe /clear /y</ActionScript>
+		</DefaultAction>
+	</Fixlet>
+</BES>

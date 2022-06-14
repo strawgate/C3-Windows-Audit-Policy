@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<BES xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="BES.xsd">
+	<Fixlet>
+		<Title>Warning - Audit Policies are applied via Group Policy which will override policies set through BigFix - Windows</Title>
+		<Description><![CDATA[<P>This fixlet is relevant on systems where a Group Policy is in place that sets audit policy settings. When Group Policy is applying audit policies and you attempt to apply Audit Policies with BigFix the policies from BigFix will appear to apply successfully but then will get overriden at the next Group Policy refresh.</p>
+<H6>Copyright</h6>
+<P>This content is part of C3 Windows Audit Policy. C3 is a software package of BigFix content made available by Strawgate LLC. This content is licensed under a combination of Commons Clause 1.0 and Apache 2.0 licenses. Without limiting other conditions in the License this License does not grant to you the right to Sell the Software. For more information see the <A href="https://github.com/strawgate/C3-Windows-Audit-Policy/blob/main/license.md"><FONT color=#0066cc>full license</FONT></A>.</p>
+]]></Description>
+		<Relevance>Windows of Operating System</Relevance>
+		<Relevance><![CDATA[Version of Operating System >= "6.2"]]></Relevance>
+		<Relevance>exists Audit Policy</Relevance>
+		<Relevance>/* Only check WMI if there is actually an active Audit Policy */ exists it whose (it = true) of (audit success of it; audit failure of it) of system policies of subcategories of categories of audit policy</Relevance>
+		<Relevance>/* Check WMI for any Audit Policy GPO */ exists select objects "* FROM RSOP_AuditPolicy" of rsop computer wmi</Relevance>
+		<Category>Audit Policy</Category>
+		<Source>C3 Audit Policy</Source>
+		<SourceID>
+		</SourceID>
+		<SourceReleaseDate>2022-06-10</SourceReleaseDate>
+		<SourceSeverity>
+		</SourceSeverity>
+		<CVENames>
+		</CVENames>
+		<SANSID>
+		</SANSID>
+		<Domain>BESC</Domain>
+	</Fixlet>
+</BES>

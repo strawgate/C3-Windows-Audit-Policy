@@ -8,8 +8,8 @@ $HelperDir = (Join-Path $PSScriptRoot "Helpers")
 . (Join-Path $HelperDir "BESTemplates.ps1")
 . (Join-Path $HelperDir "BESRelevanceHelpers.ps1")
 . (Join-Path $HelperDir "FilesystemHelpers.ps1")
+. (Join-Path $HelperDir "HTMLHelpers.ps1")
 . (Join-Path $HelperDir "XMLHelpers.ps1")
-
 
 
 Function Generate-AuditPolCategoryRelevance {
@@ -105,8 +105,15 @@ Function Generate-AuditPolicyCategoryAnalysis {
 
     
     $Name = "Audit Policy - $Category - Windows"
-    $Description = "Audit Policy - $Category - Windows"
-
+    $Description = @"
+$HTMLCSS
+<body>
+Returns information related to the current state of audit policies under the $Category audit policy category.
+<h6>$Category Audit Information</h6>
+<p>$(Get-AuditPolicyCategoryDescription -Category $Category)</p>
+$Copyright
+</body>
+"@
     $Relevance = Generate-AuditPolCategoryRelevance -Category $Category
 
     $Properties = [ordered] @{}
@@ -199,120 +206,92 @@ Function Generate-AuditPolicySubcategoryFixlet {
     $Type = if ($Success) {"Success"} else {"Failure"}
     $Action = if ($Enable) {"Enable"}   else {"Disable"}
 
-    $Title = "$Action $($Type.ToLowerInvariant()) auditing for the $Category / $Subcategory audit policy"
-    $Description = "This Fixlet $($Action.ToLowerInvariant())s the auditing of $Subcategory events that end in $($Type.ToLowerInvariant()). This policy is defined under ""$Category"" in the Windows audit policy."
+    $Title = "Config - Audit Policy - $Action $($Type.ToLowerInvariant()) auditing for $Category / $Subcategory - Windows"
+    $ActionTitle = "$($Action.ToLowerInvariant()) $($Type.ToLowerInvariant()) auditing for $Category / $Subcategory"
+
+    $Description = @"
+$HTMLCSS
+<body>
+
+<p>This Fixlet $($Action.ToLowerInvariant())s the auditing of $Subcategory events that end in $($Type.ToLowerInvariant()).</p>
+<br>
+<h6>$Category Audit Information</h6>
+<p>$(Get-AuditPolicyCategoryDescription -Category $Category)</p>
+<h6>Configuring Audit Policies</h6>
+<p>Audit Policies are configured using secpol.msc under "Advanced Audit Policy Configuration" or via Group Policy by navigating to "Windows Settings" then "Security Settings" then "Advanced Audit Policy Configuration".</p> The setting this Fixlet changes is defined under the ""$Category"" section of the Advanced Audit Policy Configuration in a setting called, ""$Subcategory"".
+<h6>Limitations</h6>
+<p>Audit Policy settings applied via Group Policy will take precedence over settings applied via BigFix.</p>
+<h6>Event Volume</h6>
+<p>Finding the right balance between auditing enough network and computer activity and auditing too little network and computer activity can be challenging. You can achieve this balance by identifying the most important resources, critical activities, and users or groups of users. Then design a security audit policy that targets these resources, activities, and users.</p>
+$Copyright
+</body>
+"@
     
     $Relevance = @(Generate-AuditPolRelevance -Category $Category -SubCategory $Subcategory -Success:$($Type -eq "Success") -Failure:$($Type -eq "Failure") -Enabled:$($Action -ne "Enable"))
     $ActionScript = Generate-AuditPolActionScript -Category $Category -SubCategory $Subcategory -Success:$($Type -eq "Success") -Failure:$($Type -eq "Failure") -Enable:$($Action -eq "Enable")
 
     $Fixlet = Generate-BigFixFixlet -Title $Title -Description $Description -Relevance $Relevance -ActionScript $ActionScript
 
-    $Fixlet.BES.Fixlet.DefaultAction.Description.PostLink = "to $title"
+    $Fixlet.BES.Fixlet.DefaultAction.Description.PostLink = " to $ActionTitle"
 
     return $Fixlet
 }
 
 
 $OutputDir = (Join-Path $PSScriptRoot "Output")
+$FixletOutputDir = (Join-Path $PSScriptRoot "Output\Individual Fixlets")
+$AnalysisOutputDir = (Join-Path $PSScriptRoot "Output\Individual Analyses")
 
 Remove-Item $OutputDir -Recurse -ErrorAction SilentlyContinue | out-null
 New-Item $OutputDir -ItemType Directory -ErrorAction SilentlyContinue | out-null
+New-Item $FixletOutputDir -ItemType Directory -ErrorAction SilentlyContinue | out-null
+New-Item $AnalysisOutputDir -ItemType Directory -ErrorAction SilentlyContinue | out-null
 
 # Generate Fixlets
 $AuditPolicyFixlets = Generate-AuditPolicyFixlets
 
 foreach ($AuditPolicyFixlet in $AuditPolicyFixlets) {
-    Save-BigFixFixlet -Fixlet $AuditPolicyFixlet -Directory $OutputDir
+    Save-BigFixFixlet -Fixlet $AuditPolicyFixlet -Directory $FixletOutputDir
 }
 
 write-host "Generated $($AuditPolicyFixlets.Count) Fixlets"
 
 # Generate Analyses
+write-host "Generating Audit Policy Category Analyses"
 $AuditPolicyAnalyses = Generate-AuditPolicyAnalyses
 
 foreach ($AuditPolicyAnalysis in $AuditPolicyAnalyses) {
-    Save-BigFixAnalysis -Analysis $AuditPolicyAnalysis -Directory $OutputDir
+    Save-BigFixAnalysis -Analysis $AuditPolicyAnalysis -Directory $AnalysisOutputDir
 }
+
+# Generate STIG Analyses
+write-host "Generating STIG Analyses"
+& (Join-Path $PSScriptRoot "STIG\Generate-STIGAnalyses.ps1") -OutDir $AnalysisOutputDir
 
 write-host "Generated $($AuditPolicyAnalyses.Count) Analyses"
 
-write-host "Zipping the generated files"
+write-host "Copying other fixlets to output directory"
 
-Compress-Archive -Path Output -DestinationPath Output.zip -Force
+$OtherFixlets = Get-ChildItem (Join-Path $PSScriptRoot "Other Fixlets") -file
 
-<#
-# Generate Fixlets
-foreach ($CategoryKV in $AuditCategoriesToSubcategoriesToGuids.GetEnumerator()) {
-    $CategoryName = $CategoryKV.Name
-    $Subcategories = $CategoryKV.Value
+Foreach ($OtherFixlet in $OtherFixlets) {
+    $SourceFileName = $OtherFixlet.Name
+    $SourceFilePath = $OtherFixlet.FullName
 
-    $AnalysisName = "Audit Policy - $CategoryName - Windows"
-    $AnalysisDescription = "Audit Policy - $CategoryName - Windows"
-    $AnalysisRelevance = Generate-AuditPolCategoryRelevance -Category $CategoryName
-    $AnalysisProperties = [ordered] @{}
+    $DestinationFileName = Shorten-Filename -Name $SourceFileName
+    $DestinationFilePath = (Join-Path $FixletOutputDir $DestinationFileName) 
 
-    foreach ($SubcategoryKV in $Subcategories.GetEnumerator()) {
-        $SubcategoryName = $SubcategoryKV.Name
-        $SubcategoryGuid = $SubcategoryKV.Value
-
-        write-host ""
-        write-host "Processing $CategoryName -> $SubcategoryName = $SubcategoryGuid"
-
-        $Types = @("Success", "Failure")
-        $Modes = @("Enable", "Disable")
-
-        foreach ($Type in $Types) {
-
-            # Generate an Analysis property while we're here
-            $PropertyName = "Audit Policy - $CategoryName - $Type auditing for $SubCategoryName - Windows"
-
-            $PropertyRelevance = "audit $Type of system policy of subcategories whose (name of it = ""$SubcategoryName"") of $($CategoryName.ToLowerInvariant()) category of audit policy"
-
-            $AnalysisProperties.Add($PropertyName,$PropertyRelevance)
-
-            # Generate Fixlets now
-
-            foreach ($Mode in $Modes) {
-                
-                write-host " Creating $Type / $Mode"
-
-                $Title = "$Mode $($type.ToLowerInvariant()) auditing for the $CategoryName / $SubcategoryName audit policy"
-                $Description = "This Fixlet $($mode.ToLowerInvariant())s the auditing of $SubcategoryName events that end in $($type.ToLowerInvariant()). This policy is defined under ""$CategoryName"" in the Windows audit policy."
-                
-                # If we want to enable a setting, we need our relevance to check if it's disabled
-                # If we want to disable a setting, we need our relevance to check if it's enabled
-                $Relevance = @(Generate-AuditPolRelevance -Category $CategoryName -SubCategory $SubcategoryName -Success:$($Type -eq "Success") -Failure:$($Type -eq "Failure") -Enabled:$($Mode -ne "Enable"))
-                $ActionScript = Generate-AuditPolActionScript -Category $CategoryName -SubCategory $SubcategoryName -Success:$($Type -eq "Success") -Failure:$($Type -eq "Failure") -Enable:$($Mode -eq "Enable")
-
-                $Fixlet = Generate-BigFixFixlet -Title $Title -Description $Description -Relevance $Relevance -ActionScript $ActionScript
-
-                $Fixlet.BES.Fixlet.DefaultAction.Description.PostLink = "to $title"
-
-                Save-BigFixFixlet -Directory (Join-Path $PSScriptRoot "Output") -Fixlet $Fixlet
-            }
-        }
-
-        $Analysis = Generate-BigFixAnalysis -Title $AnalysisName -Description $AnalysisDescription -Relevance $AnalysisRelevance -Properties $AnalysisProperties
-        Save-BigFixAnalysis -Directory (Join-Path $PSScriptRoot "Output") -Analysis $Analysis
-    }
+    Copy-Item $SourceFilePath $DestinationFilePath
 }
 
-# Generate Analyses
+Copy-Item (Join-Path $PSScriptRoot "Distributables\Readme.md") (Join-Path $OutputDir "Readme.md")
 
-<#
-foreach ($CategoryKV in $AuditCategoriesToSubcategoriesToGuids.GetEnumerator()) {
-    $CategoryName = $CategoryKV.Name
-    $Subcategories = $CategoryKV.Value
+# Shorten File Names
 
-    foreach ($SubcategoryKV in $Subcategories.GetEnumerator()) {
-        $SubcategoryName = $SubcategoryKV.Name
-        $SubcategoryGuid = $SubcategoryKV.Value
+$OutputFiles = Get-ChildItem $OutputDir -file -recurse -Filter "*.bes"
 
-        $Types = @("Success", "Failure")
+Join-BESContent -File $OutputFiles -OutFile (Join-Path $OutputDir "C3 Windows Audit Policy - All Analyses and Fixlets.bes")
 
-        foreach ($Type in $Types)
-        $Relevance = "audit success of system policy of subcategories whose (name of it = ""$SubcategoryName"") of $($CategoryName.ToLowerInvariant()) category of audit policy"
-    }
-}#>
+write-host "Zipping the generated files"
 
-#>
+Compress-Archive -Path Output\* -DestinationPath Output.zip -Force
