@@ -7,7 +7,7 @@ $ErrorActionPreference = "stop"
 
 $HelperDir = (Join-Path $PSScriptRoot "..\Helpers")
 
-. (Join-Path $PSScriptRoot "Policies.ps1")
+. (Join-Path $PSScriptRoot "STIGBaselines.ps1")
 . (Join-Path $HelperDir "AuditPolicyInfo.ps1")
 . (Join-Path $HelperDir "BESRelevanceHelpers.ps1")
 . (Join-Path $HelperDir "BESTemplates.ps1")

@@ -42,3 +42,41 @@ $STIGs = @{
         "Relevance"        = "Name of Operating System = ""Win11"""
     }
 }
+
+Function Get-STIGPlatforms {
+    return $STIGs.Keys | %{$_.ToString()}
+}
+
+Function Get-STIGInfo {
+    param (
+        $Platform
+    )
+
+    return $STIGs[$Platform]
+}
+
+
+Function Get-STIGBaselineSuccessPolicies {
+    param (
+        $Platform
+    )
+
+    return $STIGs[$Platform]["Success Policies"]
+}
+
+Function Get-STIGBaselineFailurePolicies {
+    param (
+        $Platform
+    )
+
+    return $STIGs[$Platform]["Failure Policies"]
+}
+
+
+Function Get-STIGBaselineRelevance {
+    param (
+        $Platform
+    )
+
+    return $STIGs[$Platform]["Relevance"]
+}

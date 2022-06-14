@@ -4,6 +4,8 @@ param (
     [string] $SiteType = "custom",
     [string] $SiteName = "C3-Windows-Audit-Policy",
     [string[]] $Fixlet = @("Config - Reset Audit Policy - Windows"),
+    [string] $BaselineName,
+    [string] $Relevance,
     [string] $OutFile
 )
 
@@ -107,6 +109,7 @@ class BESConnection {
         
         $Response = Invoke-Webrequest    -Credential $this.Credential `
                                          -SkipCertificateCheck:(-not $this.TrustedConnection) `
+                                         -Authentication Basic `
                                          @RequestParams
         
         $ResponseObj = $null
@@ -165,7 +168,7 @@ Function New-BESBaseline {
         [xml] $Baseline
     )
 
-    return $Connection.POST(
+    [void] $Connection.POST(
         "baselines/$SiteType/$SiteName", ('<?xml version="1.0" encoding="UTF-8"?>' + $Baseline.BES.OuterXml)
     )
 }
@@ -212,15 +215,20 @@ $FixletsInSite = $BESConnection.GET("$SitePath\content").BESAPI.Fixlet
 
 $NewBaseline = $BaselineTemplate.Clone()
 
+$NewBaseline.BES.Baseline.Title = $BaselineName
+
+$NewBaseline.BES.Baseline.Relevance = 
+
 foreach ($FixletInSite in $FixletsInSite) {
     $SiteUrl = $Site.GatherURL
     $id = $FixletInSite.Id
     $name = $FixletInSite.Name
 
-    if ($FixletInSite.Name -notin $Fixlet) { continue; <# Skip #>}
+    $FixletName = $FixletInSite.Name
+    if ($FixletName -notin $Fixlet) { continue; <# Skip #>}
 
     write-host "Adding $name ($id) to Baseline"
-    
+
     $NewBaselineComponent = $NewBaseline.CreateElement("BaselineComponent")
     $NewBaselineComponent.SetAttribute("IncludeInRelevance", "true")
     $NewBaselineComponent.SetAttribute("SourceSiteURL", $SiteUrl)
@@ -228,10 +236,10 @@ foreach ($FixletInSite in $FixletsInSite) {
     $NewBaselineComponent.SetAttribute("ActionName", "Action1")
 
     $Parentnode = $NewBaseline.SelectSingleNode("BES/Baseline/BaselineComponentCollection/BaselineComponentGroup")
-    #[void] $ParentNode.AppendChild($NewBaselineComponent)    
+    [void] $ParentNode.AppendChild($NewBaselineComponent)    
 }
 
-
+write-host "Creating Baseline in BigFix"
 New-BESBaseline -Connection $BESConnection -SiteType $SiteType -SiteName $SiteName -Baseline $NewBaseline
 
 $NewBaseline.Save((Join-Path $PSScriptRoot "Baseline.bes"))
